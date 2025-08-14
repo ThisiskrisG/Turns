@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Your Profile</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link  href="https://unpkg.com/cropperjs@1.5.13/dist/cropper.min.css" rel="stylesheet">
+<style>
+#crop-modal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.6);
+  align-items: center; justify-content: center;
+  z-index: 1050;
+  overflow-y: auto;
+  padding: 1rem;
+}
+#crop-box {
+  background: #fff;
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+  max-width: 95vw;
+  width: 100%;
+  box-sizing: border-box;
+}
+#crop-image {
+  width: 100%;
+  height: auto;
+  max-height: 60vh;
+}
+</style>
+
+<style>
+@media (min-width: 992px) {
+  body {
+    padding-left: 260px;
+  }
+  .offcanvas-lg {
+    position: fixed;
+    width: 240px;
+    height: 100vh;
+    border-right: 1px solid #ddd;
+    z-index: 1030;
+  }
+}
+</style>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+  <div class="container-fluid">
+    
+<button class="btn btn-outline-secondary d-lg-none me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar" aria-controls="mobileSidebar">
+  ☰
+</button>
+
+<a class="navbar-brand" href="index.html">
+  <img src="{{ url_for('static', filename='images/logo.png') }}" alt="TurnEgg" width="30" height="30" class="d-inline-block align-text-top">
+  TurnEgg
+</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+      data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown"
+      aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      <ul class="navbar-nav ms-auto">
+        
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink"
+             role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <img src="{{ url_for(\'static\', filename=\'images/\' + (user.photo or \'default.png\')) }}" class="rounded-circle me-2" width="32" height="32" style="object-fit: cover;"> {{ user.username or user.email }}
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+            <li><a class="dropdown-item" href="profile.html">Profile</a></li>
+            <li><a class="dropdown-item" href="#">Logout</a></li>
+          </ul>
+        </li>
+        
+        <li class="nav-item"><a class="nav-link" href="login.html">Login</a></li>
+        <li class="nav-item"><a class="nav-link" href="register.html">Register</a></li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+    <ul style="list-style: none;">
+      
+        <li style="padding: 8px; border: 1px solid #ccc; margin-bottom: 5px;
+                   background-color: {% if category == 'success' %}#d4edda{% 
+                   elif category == 'warning' %}#fff3cd{% 
+                   elif category == 'danger' %}#f8d7da{% 
+                   else %}#d1ecf1;">
+          
+        </li>
+      
+    </ul>
+  
+
+  <h1>User Profile</h1>
+
+  <div>
+    <img src="static/images/default.png" alt="Profile Picture" width="150" />
+  </div>
+
+  <form class="mb-3" action="profile.html" method="POST" enctype="multipart/form-data">
+    <p><strong>Email:</strong> demo@email.com</p>
+
+    <label for="username">Username:</label>
+    <input class="form-control mb-2" type="text" name="username" value="demo_user" required />
+
+    
+
+<style>
+#preview-img {
+  max-width: 200px;
+  max-height: 200px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ccc;
+}
+</style>
+
+<style>
+#drop-area {
+  border: 2px dashed #ccc;
+  padding: 20px;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+#drop-area.highlight {
+  border-color: purple;
+}
+</style>
+
+<div id="drop-area">
+  <p>Drag & drop a new profile picture here, or click to browse</p>
+  <input type="file" id="fileElem" name="photo" accept="image/*" style="display:none;">
+  <button type="button" class="btn btn-outline-secondary" onclick="fileElem.click()">Browse</button>
+
+<div id="preview" class="mb-3">
+  <img id="preview-img" src="{{ url_for('static', filename='images/' + user.photo) }}" width="150" alt="Current Profile Picture" />
+</div>
+
+<script>
+fileInput.addEventListener("change", () => {
+  const file = fileInput.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      document.getElementById("preview-img").src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+});
+
+<script src="https://unpkg.com/cropperjs@1.5.13/dist/cropper.min.js"></script>
+<script>
+let cropper;
+const avatarInput = document.getElementById("avatar-input");
+const cropModal = document.getElementById("crop-modal");
+const cropImage = document.getElementById("crop-image");
+
+avatarInput.addEventListener("change", function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    cropImage.src = e.target.result;
+    cropModal.style.display = "flex";
+    if (cropper) cropper.destroy();
+    cropper = new Cropper(cropImage, {
+      aspectRatio: 1,
+      viewMode: 1
+    });
+  };
+  reader.readAsDataURL(file);
+});
+
+function closeCrop() {
+  cropModal.style.display = "none";
+  if (cropper) cropper.destroy();
+  cropper = null;
+  avatarInput.value = "";
+}
+
+function applyCrop() {
+  cropper.getCroppedCanvas({ width: 100, height: 100 }).toBlob(function(blob) {
+    const form = avatarInput.closest("form");
+    const formData = new FormData(form);
+    formData.set('photo', blob, 'cropped.png');
+
+    fetch(form.action, {
+      method: form.method,
+      body: formData
+    }).then(() => location.reload());
+  }, 'image/png');
+}
+</script>
+</script>
+</div>
+
+<script>
+const dropArea = document.getElementById("drop-area");
+const fileInput = document.getElementById("fileElem");
+
+['dragenter', 'dragover'].forEach(eventName => {
+  dropArea.addEventListener(eventName, e => {
+    e.preventDefault();
+    e.stopPropagation();
+    dropArea.classList.add("highlight");
+  }, false);
+});
+
+['dragleave', 'drop'].forEach(eventName => {
+  dropArea.addEventListener(eventName, e => {
+    e.preventDefault();
+    e.stopPropagation();
+    dropArea.classList.remove("highlight");
+  }, false);
+});
+
+dropArea.addEventListener("drop", e => {
+  const dt = e.dataTransfer;
+  const files = dt.files;
+  fileInput.files = files;
+});
+
+<script src="https://unpkg.com/cropperjs@1.5.13/dist/cropper.min.js"></script>
+<script>
+let cropper;
+const avatarInput = document.getElementById("avatar-input");
+const cropModal = document.getElementById("crop-modal");
+const cropImage = document.getElementById("crop-image");
+
+avatarInput.addEventListener("change", function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    cropImage.src = e.target.result;
+    cropModal.style.display = "flex";
+    if (cropper) cropper.destroy();
+    cropper = new Cropper(cropImage, {
+      aspectRatio: 1,
+      viewMode: 1
+    });
+  };
+  reader.readAsDataURL(file);
+});
+
+function closeCrop() {
+  cropModal.style.display = "none";
+  if (cropper) cropper.destroy();
+  cropper = null;
+  avatarInput.value = "";
+}
+
+function applyCrop() {
+  cropper.getCroppedCanvas({ width: 100, height: 100 }).toBlob(function(blob) {
+    const form = avatarInput.closest("form");
+    const formData = new FormData(form);
+    formData.set('photo', blob, 'cropped.png');
+
+    fetch(form.action, {
+      method: form.method,
+      body: formData
+    }).then(() => location.reload());
+  }, 'image/png');
+}
+</script>
+</script>
+
+
+    <label for="bio">Bio:</label><br>
+    <textarea class="form-control mb-2" name="bio" rows="4" cols="40" maxlength="300">This is a short demo bio.</textarea><br>
+    <small>Max 300 characters</small><br><br>
+
+    <label for="location">Location:</label>
+    <input class="form-control mb-2" type="text" name="location" value="New York, USA"><br><br>
+
+    <button class="btn btn-primary" type="submit">Update Profile</button>
+  </form>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
+<script src="https://unpkg.com/cropperjs@1.5.13/dist/cropper.min.js"></script>
+<script>
+let cropper;
+const avatarInput = document.getElementById("avatar-input");
+const cropModal = document.getElementById("crop-modal");
+const cropImage = document.getElementById("crop-image");
+
+avatarInput.addEventListener("change", function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    cropImage.src = e.target.result;
+    cropModal.style.display = "flex";
+    if (cropper) cropper.destroy();
+    cropper = new Cropper(cropImage, {
+      aspectRatio: 1,
+      viewMode: 1
+    });
+  };
+  reader.readAsDataURL(file);
+});
+
+function closeCrop() {
+  cropModal.style.display = "none";
+  if (cropper) cropper.destroy();
+  cropper = null;
+  avatarInput.value = "";
+}
+
+function applyCrop() {
+  cropper.getCroppedCanvas({ width: 100, height: 100 }).toBlob(function(blob) {
+    const form = avatarInput.closest("form");
+    const formData = new FormData(form);
+    formData.set('photo', blob, 'cropped.png');
+
+    fetch(form.action, {
+      method: form.method,
+      body: formData
+    }).then(() => location.reload());
+  }, 'image/png');
+}
+</script>
+</script>
+
+<!-- Crop Modal -->
+<div id="crop-modal" class="d-flex">
+  <div id="crop-box">
+    <h5 class="mb-3">Crop Profile Picture</h5>
+    <img id="crop-image" src="#" alt="Preview">
+    <div class="mt-3">
+      <button type="button" class="btn btn-secondary me-2" onclick="closeCrop()">Cancel</button>
+      <button type="button" class="btn btn-primary" onclick="applyCrop()">Crop & Upload</button>
+    </div>
+  </div>
+</div>
+
+
+<div class="offcanvas-lg offcanvas-start show d-lg-block" tabindex="-1" id="mobileSidebar" aria-labelledby="mobileSidebarLabel">
+  <div class="offcanvas-header d-none d-lg-flex">
+    <h5 class="offcanvas-title" id="mobileSidebarLabel">Menu</h5>
+  </div>
+  <div class="offcanvas-body">
+    <div class="text-center mb-3">
+      <img src="{{ url_for('static', filename='images/' + (user.photo or 'default.png')) }}" class="rounded-circle" width="64" height="64" style="object-fit: cover;">
+      <p class="mt-2">{{ user.username or user.email }}</p>
+    </div>
+    <ul class="nav flex-column">
+  <li class="nav-item">
+    <a class="nav-link d-flex align-items-center {% if request.endpoint == 'profile' %}active fw-bold text-primary{% endif %}" href="{{ url_for('profile') }}">
+      <i class="bi bi-person me-2"></i> Profile
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link d-flex align-items-center {% if request.endpoint == 'logout' %}active fw-bold text-primary{% endif %}" href="{{ url_for('logout') }}">
+      <i class="bi bi-box-arrow-right me-2"></i> Logout
+    </a>
+  </li>
+</ul>
+  </div>
+</div>
+
+</body>
+</html>
